@@ -36,27 +36,27 @@ public class TagAdapter extends RecyclerView.Adapter<TagAdapter.TagViewHolder> {
         return new TagViewHolder(newView);
     }
 
+    void execute(int position){
+        new GetQuoteData(tagList.get(position))
+                .execute();
+    }
+
     @Override
     public void onBindViewHolder(@NonNull TagViewHolder holder, final int position) {
         holder.tagText.setText(tagList.get(position));
-//        if(savedHolder == null){
-//            holder.constraintLayout.setBackgroundResource(R.drawable.tag_selected);
-//            savedHolder=holder;
-//        }
         holder.relativeLayout.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
                 savedPosition = position;
                 notifyDataSetChanged();
+                execute(position);
             }
         });
         if(position == savedPosition){
             holder.relativeLayout.startAnimation(AnimationUtils.loadAnimation(context,R.anim.tag_animation));
             holder.relativeLayout.setBackgroundResource(R.drawable.tag_selected);
             holder.tagText.setTextColor(activity.getResources().getColor(R.color.colorPrimaryDark,activity.getTheme()));
-            new MainActivity.GetQuoteData(activity,tagList.get(position)).execute();
-        }
-        else {
+        } else {
             holder.relativeLayout.setBackgroundResource(R.drawable.quote_bg);
             holder.tagText.setTextColor(activity.getResources().getColor(R.color.white,activity.getTheme()));
         }

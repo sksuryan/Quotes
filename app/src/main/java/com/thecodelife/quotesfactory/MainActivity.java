@@ -26,7 +26,6 @@ import java.util.List;
 import javax.net.ssl.HttpsURLConnection;
 
 public class MainActivity extends AppCompatActivity {
-
     private static List<String> tagList;
 
     static{
@@ -63,113 +62,17 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        new GetQuoteData(this, tagList.get(0)).execute();
+        createTagList();
+        GetQuoteData.setActivity(this);
+        GetQuoteData getQuoteData = new GetQuoteData(GetQuoteData.DEFAULT);
+        getQuoteData.execute();
     }
 
-    public static class GetQuoteData extends AsyncTask<Void, Void, List<QuoteData>> {
-        private StringBuffer response;
-        private static final String TAG = "getQuoteData";
-        private static boolean firstRun = true;
-        private boolean tagCheck;
-        private static List<QuoteData> quoteData;
-        static String lastTag = "";
-        private static int page=1;
-        private String newTag;
-        @SuppressLint("StaticFieldLeak")
-        private Activity activity;
-        @SuppressLint("StaticFieldLeak")
-        private static QuotesAdapter quotesAdapter;
-        @SuppressLint("StaticFieldLeak")
-        private static RecyclerView quotesView;
-
-        GetQuoteData(Activity activity, String tag) {
-            this.activity = activity;
-            newTag = tag;
-        }
-
-        @Override
-        protected List<QuoteData> doInBackground(Void... voids) {
-            List quoteData = new ArrayList<>();
-            try {
-                String readLine;
-                String url;
-                URL requestURL;
-                if(lastTag.contentEquals(newTag)) {
-                    page += 1;
-                    tagCheck=true;
-                }
-                else{
-                    lastTag=newTag;
-                    page=1;
-                    tagCheck=false;
-                }
-                if(newTag.contentEquals("random"))
-                    requestURL= new URL("https://favqs.com/api/quotes");
-                else {
-                    url = "https://favqs.com/api/quotes?filter=" + newTag + "&type=tag&page=" +page;
-                    requestURL = new URL(url);
-                }
-                HttpsURLConnection newConnection = (HttpsURLConnection)requestURL.openConnection();
-                newConnection.setRequestMethod("GET");
-                newConnection.setRequestProperty("Authorization",activity.getString(R.string.API));
-                int responseCode = newConnection.getResponseCode();
-
-                if(responseCode == HttpsURLConnection.HTTP_OK){
-                    BufferedReader in = new BufferedReader(
-                            new InputStreamReader(newConnection.getInputStream()));
-                    response = new StringBuffer();
-                    while ((readLine = in .readLine()) != null) {
-                        response.append(readLine);
-                    } in .close();
-                }
-                JSONObject newJSONObject = new JSONObject(response.toString());
-                JSONArray quotes = newJSONObject.getJSONArray("quotes");
-                for(int i = 0; i<quotes.length();i++){
-                    quoteData.add(new QuoteData(quotes.getJSONObject(i).getString("body"),quotes.getJSONObject(i).getString("author")));
-                }
-            } catch (MalformedURLException malformedURLException){
-                Log.e(TAG, "doInBackground: MalformedURLException ",malformedURLException );
-            } catch (IOException ioe) {
-                Log.e(TAG, "doInBackground: IOException ", ioe);
-            }catch (JSONException jsonException){
-                Log.e(TAG, "doInBackground: JSONException", jsonException);
-            }
-            return quoteData;
-        }
-
-        @Override
-        protected void onPostExecute(List<QuoteData> Data) {
-            super.onPostExecute(Data);
-                if(firstRun){
-                    quoteData = Data;
-                    initializeRecyclerView();
-                    firstRun = false;
-                } else if(tagCheck){
-                    int currentSize = quoteData.size();
-                    quoteData.addAll(quoteData.size(),Data);
-                    quotesAdapter.notifyItemRangeInserted(currentSize,Data.size());
-                } else {
-                    quoteData.clear();
-                    quoteData.addAll(quoteData.size(),Data);
-                    quotesAdapter.notifyDataSetChanged();
-                }
-        }
-
-        private void initializeRecyclerView(){
-            createTagList();
-            quotesView = activity.findViewById(R.id.quoteRecyclerView);
-            quotesAdapter = new QuotesAdapter(quoteData, activity);
-            quotesView.setHasFixedSize(true);
-            quotesView.setLayoutManager(new LinearLayoutManager(activity.getApplicationContext()));
-            quotesView.setAdapter(quotesAdapter);
-        }
-
-        void createTagList(){
-            RecyclerView tagRecyclerView = activity.findViewById(R.id.tagRecyclerView);
-            TagAdapter tagAdapter = new TagAdapter(activity,tagList);
-            tagRecyclerView.setHasFixedSize(true);
-            tagRecyclerView.setLayoutManager(new LinearLayoutManager(activity.getApplicationContext(),LinearLayoutManager.HORIZONTAL,false));
-            tagRecyclerView.setAdapter(tagAdapter);
-        }
+    void createTagList(){
+        RecyclerView tagRecyclerView = findViewById(R.id.tagRecyclerView);
+        TagAdapter tagAdapter = new TagAdapter(this,tagList);
+        tagRecyclerView.setHasFixedSize(true);
+        tagRecyclerView.setLayoutManager(new LinearLayoutManager(this,LinearLayoutManager.HORIZONTAL,false));
+        tagRecyclerView.setAdapter(tagAdapter);
     }
 }

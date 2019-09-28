@@ -54,8 +54,8 @@ public class QuotesAdapter extends RecyclerView.Adapter<QuotesAdapter.QuotesView
         };
         holder.quoteLayout.setOnLongClickListener(newLongClickListener);
         if(position == getItemCount()-1) {
-            MainActivity.GetQuoteData getData = new MainActivity.GetQuoteData(activity, MainActivity.GetQuoteData.lastTag);
-            getData.execute();
+            GetQuoteData getQuoteData = new GetQuoteData("last");
+            getQuoteData.execute();
         }
     }
 

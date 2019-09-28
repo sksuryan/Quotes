@@ -1,6 +1,6 @@
 package com.thecodelife.quotesfactory;
 
-public class QuoteData {
+class QuoteData {
     private String quote,authorName;
 
     public QuoteData(String quote, String authorName) {
