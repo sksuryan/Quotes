@@ -1,0 +1,6 @@
+<resources>
+    <string name="app_name">Quotes Factory</string>
+    <string name="quote_holder">\"You can quote them, disagree with them, glorify or vilify them. About the only thing you can\'t do is ignore them. Because they change things. They push the human race forward. And while some may see them as the crazy ones, we see genius.\"</string>
+    <string name="author_name">Author Name</string>
+    <string name="API">@string/API_KEY</string>
+</resources>
