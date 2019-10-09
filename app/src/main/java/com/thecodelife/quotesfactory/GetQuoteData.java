@@ -111,6 +111,7 @@ public class GetQuoteData extends AsyncTask<Void, Void, List<QuoteData>> {
             updateRecyclerView(1,currentSize,Data.size());
 
         } else {//ChangeType = 2
+            Log.d(TAG, "onPostExecute: Change Type 2");
             quoteData.clear();
             quoteData.addAll(quoteData.size(),Data);
             updateRecyclerView(2,-1,-1);

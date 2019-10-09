@@ -36,11 +36,6 @@ public class TagAdapter extends RecyclerView.Adapter<TagAdapter.TagViewHolder> {
         return new TagViewHolder(newView);
     }
 
-    void execute(int position){
-        new GetQuoteData(tagList.get(position))
-                .execute();
-    }
-
     @Override
     public void onBindViewHolder(@NonNull TagViewHolder holder, final int position) {
         holder.tagText.setText(tagList.get(position));
@@ -49,7 +44,8 @@ public class TagAdapter extends RecyclerView.Adapter<TagAdapter.TagViewHolder> {
             public void onClick(View v) {
                 savedPosition = position;
                 notifyDataSetChanged();
-                execute(position);
+                new GetQuoteData(tagList.get(position))
+                        .execute();
             }
         });
         if(position == savedPosition){

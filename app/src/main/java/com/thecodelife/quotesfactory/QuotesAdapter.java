@@ -23,6 +23,7 @@ public class QuotesAdapter extends RecyclerView.Adapter<QuotesAdapter.QuotesView
     private List<QuoteData> quoteData;
     private Activity activity;
     private Context context;
+
     QuotesAdapter(List<QuoteData> quoteData, Activity activity) {
         this.quoteData = quoteData;
         this.activity = activity;
@@ -54,8 +55,8 @@ public class QuotesAdapter extends RecyclerView.Adapter<QuotesAdapter.QuotesView
         };
         holder.quoteLayout.setOnLongClickListener(newLongClickListener);
         if(position == getItemCount()-1) {
-            GetQuoteData getQuoteData = new GetQuoteData("last");
-            getQuoteData.execute();
+            new GetQuoteData("last")
+                    .execute();
         }
     }
 
